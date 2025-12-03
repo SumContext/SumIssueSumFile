@@ -3,7 +3,7 @@
 
 Vibe coding development environment.
 
-At it's heart RLC is `concat_macro.sh` everything else is icing on the 
+The heart of RLC is `concat_macro.sh` everything else is icing on the 
 cake or documentation and gui helper apps or macros to assist in using 
 `concat_macro.sh`
 

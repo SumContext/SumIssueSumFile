@@ -35,7 +35,7 @@ def open_directory():
 def populate_tree_item(parent_item, path):
     entries = sorted(os.scandir(path), key=lambda e: (not e.is_dir(), e.name.lower()))
     for entry in entries:
-        item = QtWidgets.QTreeWidgetItem([entry.name])
+        item = QtWidgets.QTreeWidgetItem([entry.name, "❌", "❌"])
         item.setData(0, QtCore.Qt.UserRole, entry.path)
         parent_item.addChild(item)
         if entry.is_dir():
@@ -46,7 +46,7 @@ def populate_tree_item(parent_item, path):
 def populate_tree(tree_widget, dir_name):
     tree_widget.clear()
     root_name = os.path.basename(dir_name) or dir_name
-    root_item = QtWidgets.QTreeWidgetItem([root_name])
+    root_item = QtWidgets.QTreeWidgetItem([root_name, "❌", "❌"])
     root_item.setData(0, QtCore.Qt.UserRole, dir_name)
     tree_widget.addTopLevelItem(root_item)
     populate_tree_item(root_item, dir_name)
@@ -71,6 +71,14 @@ def on_selection_changed():
         else:
             plain_text_edit.clear()
 
+def on_item_clicked(item, column):
+    if column == 2:
+        current = item.text(2)
+        if current == "❌":
+            item.setText(2, "✅")
+        elif current == "✅":
+            item.setText(2, "❌")
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     loader = QUiLoader()
@@ -85,8 +93,11 @@ if __name__ == '__main__':
         plain_text_edit.setReadOnly(True)
 
     if tree_widget:
+        tree_widget.setColumnCount(3)
+        tree_widget.setHeaderLabels(["File", "sgst", "pert"])
         tree_widget.itemSelectionChanged.connect(on_selection_changed)
         tree_widget.itemExpanded.connect(on_item_expanded)
+        tree_widget.itemClicked.connect(on_item_clicked)
         tree_widget.setSortingEnabled(True)
         tree_widget.sortByColumn(0, QtCore.Qt.AscendingOrder)
 

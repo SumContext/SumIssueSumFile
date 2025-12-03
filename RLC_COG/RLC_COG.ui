@@ -13,31 +13,29 @@
   <property name="windowTitle">
    <string>RLC Cut Out Gui</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QSplitter" name="splitter">
-    <property name="geometry">
-     <rect>
-      <x>1</x>
-      <y>1</y>
-      <width>512</width>
-      <height>192</height>
-     </rect>
-    </property>
+<widget class="QWidget" name="gridLayoutWidget">
+ <property name="geometry">
+  <rect>
+   <x>0</x>
+   <y>0</y>
+   <width>640</width>
+   <height>460</height>
+  </rect>
+ </property>
+ <layout class="QGridLayout" name="gridLayout">
+  <item row="0" column="0">
+   <widget class="QSplitter" name="Vsplitter">
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding"/>
     </property>
     <property name="orientation">
-     <enum>Qt::Orientation::Horizontal</enum>
+     <enum>Qt::Vertical</enum>
     </property>
-    <widget class="QPlainTextEdit" name="plainTextEditViewCurrentFile">
+
+    <!-- Top pane -->
+    <widget class="QPlainTextEdit" name="plainTextEditIssue">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding"/>
      </property>
      <property name="styleSheet">
       <string notr="true">QPlainTextEdit {
@@ -45,22 +43,49 @@
 }
 QPlainTextEdit QScrollBar {
     background: none;
-}
-        </string>
+}</string>
      </property>
      <property name="lineWrapMode">
-      <enum>QPlainTextEdit::LineWrapMode::NoWrap</enum>
+      <enum>QPlainTextEdit::NoWrap</enum>
      </property>
     </widget>
-    <widget class="QTreeWidget" name="treeWidgetFileList">
-     <column>
-      <property name="text">
-       <string notr="true">1</string>
+
+    <!-- Bottom pane: horizontal splitter -->
+    <widget class="QSplitter" name="Hsplitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+
+     <widget class="QPlainTextEdit" name="plainTextEditViewCurrentFile">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding"/>
       </property>
-     </column>
+      <property name="styleSheet">
+       <string notr="true">QPlainTextEdit {
+    background-color: white;
+}
+QPlainTextEdit QScrollBar {
+    background: none;
+}</string>
+      </property>
+      <property name="lineWrapMode">
+       <enum>QPlainTextEdit::NoWrap</enum>
+      </property>
+     </widget>
+
+     <widget class="QTreeWidget" name="treeWidgetFileList">
+      <column>
+       <property name="text">
+        <string notr="true">1</string>
+       </property>
+      </column>
+     </widget>
     </widget>
    </widget>
-  </widget>
+  </item>
+ </layout>
+</widget>
+
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
