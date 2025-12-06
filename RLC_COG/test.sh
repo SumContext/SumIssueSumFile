@@ -34,8 +34,8 @@ cd "$owd"
 
 # python ./test.py
 
-./dir_sum2json.py ../
-./routersum.py
+./RLC_COG.py ../
+
 # echo exiting test.sh
 exit
 #_______________________________________________________________________________

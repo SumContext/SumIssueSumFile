@@ -36,6 +36,7 @@ let
     ps.tinygrad
     ps.openai
     ps.pydantic
+    ps.requests
   ]);
 
 in pkgs.mkShell {
