@@ -1,8 +1,8 @@
 {
   "projectConfig": {
     "maxSupportedFileSize": 40960,
-    "JuniorLLM": "gpt-oss-20b",
-    "SeniorLLM": "gpt-oss-20b",
+    "JuniorLLM": "openai/gpt-oss-20b:free",
+    "SeniorLLM": "openai/gpt-oss-20b:free",
     "supportedFileTypes": [
       "c",
       "py",
