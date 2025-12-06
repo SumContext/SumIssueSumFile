@@ -55,7 +55,7 @@ def file2sum(file_path):
     # We look for cog_cfg.json in the same directory as the script
     script_dir = os.path.dirname(os.path.abspath(__file__))
     cfg_path = os.path.join(script_dir, "cog_cfg.json")
-    model_name = "gpt-oss-20b" # Default fallback
+    model_name = "openai/gpt-oss-20b:free" # Default fallback
     
     if os.path.exists(cfg_path):
         try:
@@ -104,28 +104,45 @@ def file2sum(file_path):
         data = response.json()
     except Exception as e:
         return f"API Error: {str(e)}"
-
     # 6. Parse and Format Output
     try:
         # Extract the assistant's message
         message = data['choices'][0]['message']
         content = message.get('content', '').strip()
-        
-        # Extract reasoning (based on your log file structure)
-        reasoning = message.get('reasoning', 'Analysis complete.')
-        
-        # Construct the simulated interaction string
-        # Note: We escape the backticks for the output string
-        output_str = (
-            f"User: Please provide a markdown code escaped 111 chars or less summary of `{os.path.basename(file_path)}`.\n\n"
-            f"Assistant:\n"
-            f"<think>\n{reasoning}\n</think>\n\n"
-            f"```\n{content}\n```"
-        )
-        return output_str
+
+        # Trim markdown fences if present
+        if content.startswith("```") and content.endswith("```"):
+            # remove the outer triple backticks and optional language tag
+            lines = content.splitlines()
+            if len(lines) >= 2:
+                content = "\n".join(lines[1:-1]).strip()
+
+        return content
 
     except (KeyError, IndexError) as e:
         return f"Error parsing JSON response: {str(e)}"
+
+#     # 6. Parse and Format Output
+#     try:
+#         # Extract the assistant's message
+#         message = data['choices'][0]['message']
+#         content = message.get('content', '').strip()
+#         
+#         # Extract reasoning (based on your log file structure)
+#         reasoning = message.get('reasoning', 'Analysis complete.')
+#         
+#         # Construct the simulated interaction string
+#         # Note: We escape the backticks for the output string
+#         output_str = (
+#             # f"User: Please provide a markdown code escaped 111 chars or less summary of `{os.path.basename(file_path)}`.\n\n"
+#             # f"Assistant:\n"
+#             # f"<think>\n{reasoning}\n</think>\n\n"
+#             f"```\n{content}\n```"
+#         )
+#         return output_str
+# 
+#     except (KeyError, IndexError) as e:
+#         return f"Error parsing JSON response: {str(e)}"
 
 
 def load_ignore_patterns(dir_path: str):
@@ -296,7 +313,7 @@ def main():
     flist = ftree2sums(ftree)
     print(json.dumps(flist, indent=2))
     print(ftree2bashtree(ftree))
-    print(file2sum(cwfd + "/RLC_COG.ui"))
+    # print(file2sum(cwfd + "/RLC_COG.ui"))
     # flist = ftree2sums(flist)
     # enrich with summaries (using cache if available)
     flist = flistwithsums(flist, args.directory)
