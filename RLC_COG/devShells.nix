@@ -5,23 +5,23 @@ let
   # 1. Define a custom Python instance with OVERRIDES.
   myPython = pkgs.python313.override {
     packageOverrides = final: prev: {
-      # Existing overrides...
-      torch = prev.torch.override { vulkanSupport = true; };
-
-      stable-baselines3 = prev.stable-baselines3.overridePythonAttrs (old: {
-        doCheck = false; 
-      });
+#       # Existing overrides...
+#       torch = prev.torch.override { vulkanSupport = true; };
+# 
+#       stable-baselines3 = prev.stable-baselines3.overridePythonAttrs (old: {
+#         doCheck = false; 
+#       });
 
       # New override for Keras: Add pillow to checkInputs to fix test failures
-      keras = prev.keras.overridePythonAttrs (old: rec {
-        checkInputs = (old.checkInputs or []) ++ [ final.pillow ];
-      });
+#       keras = prev.keras.overridePythonAttrs (old: rec {
+#         checkInputs = (old.checkInputs or []) ++ [ final.pillow ];
+#       });
     };
   };
 
   # 2. Create the environment using the CUSTOM python instance
   myPythonEnv = myPython.withPackages (ps: [
-    ps.torch 
+#     ps.torch 
     ps.pyside6
     ps.shiboken6
     ps.matplotlib
@@ -29,13 +29,13 @@ let
     ps.opencv-python
     ps.stable-baselines3
     ps.tqdm
-    ps.ale-py
-    ps.gymnasium
+#     ps.ale-py
+#     ps.gymnasium
     # Add pillow for runtime image utils (e.g., if dqn.py or other code needs PIL)
     ps.pillow
     ps.tinygrad
     ps.openai
-    ps.pydantic
+#     ps.pydantic
     ps.requests
   ]);
 
@@ -44,17 +44,17 @@ in pkgs.mkShell {
     # The consolidated Python environment
     myPythonEnv
     # System Libraries for Vulkan (Required for the backend to find drivers)
-    pkgs.vulkan-loader
-    pkgs.vulkan-headers
-    pkgs.vulkan-tools
-    pkgs.vulkan-validation-layers
-
-    # AMD/OpenCL Drivers
-    pkgs.rocmPackages.clr
-    pkgs.rocmPackages.rocm-smi
-    pkgs.ocl-icd
-    pkgs.opencl-headers
-    pkgs.clinfo
+#     pkgs.vulkan-loader
+#     pkgs.vulkan-headers
+#     pkgs.vulkan-tools
+#     pkgs.vulkan-validation-layers
+# 
+#     # AMD/OpenCL Drivers
+#     pkgs.rocmPackages.clr
+#     pkgs.rocmPackages.rocm-smi
+#     pkgs.ocl-icd
+#     pkgs.opencl-headers
+#     pkgs.clinfo
 
     # Dev Tools
     pkgs.ruff
