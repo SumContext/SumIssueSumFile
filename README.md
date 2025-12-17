@@ -83,19 +83,3 @@ current file, along with a json yes/no dialog for if the current file
 is pertinent to our issue; returns true or false
 
 ### 
-
-
-
-### We are going to ask the junior dev to list all files
-
-We are going to go through each command in VLORI
-
-and if it is a file in our project we will mark the file as request_pertinence()
-
-if it is not within our project we will not mark it for the junior devs to request_pertinence()
-
-The junior-devs will be making the final decision if the senior-devs need to see the files to solve the issue we are working on.
-
-before we can run the fixes from the senior-devs we need to prepare the compressed issue, help me edit the pertinent issues options on the files.json that controls which files are sent to the junior-devs for pertinence review.
-
-remember only select files that directly print to VLORI.
