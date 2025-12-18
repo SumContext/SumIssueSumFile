@@ -7,15 +7,15 @@ Vibe coding development environment.
 
 # RLC - Run Log Concat
 
-Run/Test/Release - Quality testing and reporting are put into production.
-Log/Deploy/Production - Keep track of your project and make sure it is constantly optimised.
-Concat/Review/Retirement - End-of-life activities.
+*Run*/Test/Release - Quality testing and reporting are put into production.  
+*Log*/Deploy/Production - Keep track of your project and make sure it is constantly optimised.  
+*Concat*/Review/Retirement - End-of-life activities.
 
 ----------------------------------------------------------------------
 
 `concat_macro.sh` is the heart of RLC, it's goal is to create a 
 semi-reproducible log of the problem at hand. There is still non 
-deterministic things like time and system information, which be 
+deterministic things like time and system information, which may be 
 pertinent to the current issue, like process `X` takes this long or 
 we're having trouble with hardware `Y`.
 
@@ -91,7 +91,42 @@ In the event the issue isn't solved,
 
 ----------------------------------------------------------------------
 
-## Liaison
+`concat_macro.sh` file:
+
+```
+run_and_log() { # run a script $1 and log to output $2
+    utcupdate
+    echo "Running $1 at $utc"
+    sumtree
+    nix-shell "$3" --run "bash $1" 2>&1 | tee "$2"
+    utcupdate
+    echo "Completed $1 at $utc"
+}
+
+combine_files() {
+  shift
+  rm $1
+  # Loop through remaining args (the input files)
+  for file in "$@"; do
+    filename=$(basename "$file")
+    # Print header with 10 # chars before and after
+    {
+      echo -e "#####\nFile: $filename\n######\n\n\`\`\`"
+      # Escape triple backticks in file content
+      sed 's/```/\\```/g' "$file"
+      echo -e "\n\`\`\`"
+    } >> "$1"
+  done
+}
+
+cd $owd
+
+run_and_log "./issue67.sh" "./issue67.log" "./devShells.nix"
+
+combine_files concat67.md ./devShells.nix ./issue67.log ./test67.py ./issue67.md
+```
+
+## PDD Liaisons
 
 As a liaison between a large set of senior & junior developers, 
 managing a context-management-workflow, where we have several tasks 
@@ -104,6 +139,8 @@ Our goal here is to reproduce the issue.
 VLORI or verbose_log_of_running_issue.sh.txt is the result of the 
 issue.sh commands used to run all commands and programs, only we will 
 have access to the files tagged with [-]
+
+note issue.sh is included in VLORI that is why only the liaisons have access
 
 ### Environment:
 
@@ -126,28 +163,79 @@ developers.
 
 ----------------------------------------------------------------------
 
-test deploy review will be automated with RLC
-
-----------------------------------------------------------------------
-
-# PDD - plan design develop
+# PDD - Plan Design Develop
 
 There are 3 Liaisons, 1 each for plan design development.
 
-Plan Liaison manages review, requirements, and readme. They are in charge of deciding status of the project or subtask, and asking the user/client for more information if necessary. they are also in charge of benchmarks and tests.
+*Plan Liaison* manages review, requirements, and readme. They are in 
+charge of deciding status of the project or subtask, and asking the 
+user/client for more information if necessary. they are also in charge 
+of benchmarks and tests.
 
-Design Liaison manages design patterns, and waits for subtasks to complete before moving to Dev-stage
-the junior dev will act as a senior-dev until all libraries are installed.
+*Design Liaison* manages dependency resolution and timing this 
+includes issuing new subtasks and waiting for them to complete before 
+moving to Dev-stage the junior dev will act as a senior-dev until all 
+libraries are installed, after dependencies are resolved they are to 
+make a list of files from the VLORI that are pertient to the issue.
 
-Development Liaison processes the output of the senior dev, and prepares a patch to be applied to the project.
+IF dependencies or other libs or pathing issues or system issues were 
+solved etc. from subtasks The VLORI will be recreated at this point by 
+running RLC. note this happens in a subtask.
+
+At this point a junior dev will make a list of candidates of files 
+causing the issue by processing the VLORI. SumIssueSumFile() will be 
+recursively run on files starting with the VLORI, and output a tree 
+that may contain duplicates.
+
+*Senior Developer* after the VLORI is failing not because of 
+dependencies or other libraries not passing tests, list of files 
+created by the *Design Liaison* along with the VLORI will be sent to 
+the Senior-Dev to suggest possible solutions.
+
+*Development Liaison* processes the output of the senior dev, and 
+prepares a patch to be applied to the project. They are in charge of 
+applying edits as described by the senior dev.
+
+The VLORI will be recreated at this point by running RLC
+
+At this point a junior dev will make a list of candidates of files 
+causing the issue by processing the VLORI. SumIssueSumFile() will be 
+recursively run on files starting with the VLORI, and output a tree 
+that may contain duplicates.
+
+Process will restart at plan/review Liaison
+
+----------------------------------------------------------------------
+
+ just a list of all files executed in the VLORI, 
+
+From the candidates it will read them 1 by 1 and decide if there is any documentation or source from other files that needs to be included to answer the issue at hand.
+
+on all candidates.
+
+, for the 
+Planner to review, 
+
+test deploy review will be automated with RLC
+----------------------------------------------------------------------
+
+this should really only happen at the begining of a project or issue
+
+and the VLORI has failed at least 1x for the current issue. on the 0th iteration the junior dev will work with the user to prepare 
+
+Making certain VLORI is not failing because of library or other dependency either isn't installed or passing tests.
+that way subtask can be issued to handle the installation and evaluation of dependencies. This process makes certain the system is working as planned
 
 ----------------------------------------------------------------------
 
 ## Plan/Concept - Projects and the viability are envisioned and prioritised.
 
-If we are here are previous step was concatenate. This is when we review the VLORI, if there is no VLORI this task has just begun.
+*Plan Liaison* manages review, requirements, and readme. They are in 
+charge of deciding status of the project or subtask, and asking the 
+user/client for more information if necessary. they are also in charge 
+of benchmarks and tests.
 
-Plan Liaison manages review, requirements, and readme. They are in charge of deciding status of the project or subtask, and asking the user/client for more information if necessary. they are also in charge of benchmarks and tests.
+If we are here are previous step was concatenate. This is when we review the VLORI, if there is no VLORI this task has just begun.
 
 Project-Description
 
@@ -166,6 +254,12 @@ Planning Liaison is to figure out what job completion looks like, and handle sen
 ----------------------------------------------------------------------
 
 ## Design/Inception - Initial requirements are discussed and decided.
+
+*Design Liaison* manages dependency resolution and timing this 
+includes issuing new subtasks and waiting for them to complete before 
+moving to Dev-stage the junior dev will act as a senior-dev until all 
+libraries are installed, after dependencies are resolved they are to 
+make a list of files from the VLORI that are pertient to the issue.
 
 Design Liaison manages design patterns, and waits for subtasks to complete before moving to Dev-stage
 the junior dev will act as a senior-dev until all libraries are installed.
@@ -214,6 +308,15 @@ From the candidates it will read them 1 by 1 and decide if there is any document
 
 SumIssueSumFile() on all candidates.
 
+#### SumIssueSumFile
+
+`SumIssueSumFile(issue, file, target_dir)`
+
+VLORI will have the sumtree output
+, the issue we are working on, and the entire 
+current file, along with a json yes/no dialog for if the current file 
+is pertinent to our issue; returns true or false
+
 once the Design Liaison is done selecting pertinent source code, this will start the RLC_COG gui with the selected files/code highlighted. so the client/user can assist in selecting/deselecting pertinent code to be handed to the senior dev along with the VLORI.
 
 ----------------------------------------------------------------------
@@ -244,12 +347,3 @@ our job is to create the file directory skeleton of the project, manage library 
 if there needs to be more verbose output etc. needs to be a question the senior dev will ask us to ask the client/user/customer.
 
 ----------------------------------------------------------------------
-
-# SumIssueSumFile
-
-`SumIssueSumFile(issue, file, target_dir)`
-
-VLORI will have the sumtree output
-, the issue we are working on, and the entire 
-current file, along with a json yes/no dialog for if the current file 
-is pertinent to our issue; returns true or false
